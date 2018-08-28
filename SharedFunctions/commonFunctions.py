@@ -38,6 +38,7 @@ def searchFile(Directory, FileNameOrExtenstion):
 ##################################################################################################################
 def stripList(listInput):
     return([x.strip() for x in listInput])
+
 ##################################################################################################################
 
 
@@ -59,4 +60,34 @@ def dropEvenOrOddElmentsOfList(list, EvenOrOdd):
 
     return finalList
 
+##################################################################################################################
+
+
+
+##################################################################################################################
+# Function Name: checkFolder
+# Description  : Checks if the given folder exists, if not then creates a new one
+# @param       : Folder Location along with Folder Name.
+##################################################################################################################
+def checkFolder (folderLoc):
+    if not os.path.exists(folderLoc):
+        os.makedirs(folderLoc)
+        
+##################################################################################################################
+
+
+
+##################################################################################################################
+# Function Name: createCurrDateFolderName
+# Description  : Creates a Folder Name of Current Date in format YYYYMMDD
+# @return      : String of CurrentDate Folder Name
+##################################################################################################################
+def createCurrDateFolderName():
+    now = datetime.datetime.now()
+    year = str(now.year)
+    month = now.strftime('%m')
+    day = now.strftime('%d')
+    strCurrFolder = year+month+day
+    return strCurrFolder
+        
 ##################################################################################################################
