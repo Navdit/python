@@ -3,6 +3,7 @@ from openpyxl import load_workbook
 import xlsxwriter
 import datetime
 import pandas as pd
+import win32com.client as win32     # pip install pywin32
 
 
 ##################################################################################################################
@@ -159,5 +160,31 @@ def set_active_sheet(sheet_name, output_excel_loc):
 
     # Save the workbook
     xls_book.save(output_excel_loc)
+
+##################################################################################################################
+
+
+##################################################################################################################
+# Function Name: auto_fit_columns_of_excel
+# Description  : Auto Fits the column of Excel
+# @param       : String: output_excel_loc - Location of excel which needs to be formatted
+# @return      : Null
+##################################################################################################################
+def auto_fit_columns_of_excel(output_excel_loc):
+    # Initialize
+    excel = win32.gencache.EnsureDispatch('Excel.Application')
+
+    # Read Excel
+    wb = excel.Workbooks.Open(output_excel_loc)
+
+    # Loop through all the sheets
+    for sheet in wb.Worksheets:
+        ws = wb.Worksheets(sheet.Name)
+        ws.Columns.AutoFit()
+
+    # Save the Excel
+    wb.Save()
+    wb.Close(True)
+    excel.Application.Quit()
 
 ##################################################################################################################
