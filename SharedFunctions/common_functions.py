@@ -136,3 +136,28 @@ def write_to_excel(sheet_name, output_excel_df, output_excel_loc, append=True):
     writer.close()
 
 ##################################################################################################################
+
+
+##################################################################################################################
+# Function Name: set_active_sheet
+# Description  : It makes the given sheet as active
+# @param       : String: sheet_name
+# @param       : String: output_excel_loc - Location of the excel file
+# @return      : Null
+##################################################################################################################
+def set_active_sheet(sheet_name, output_excel_loc):
+    # Load Excel Sheet
+    xls_book = load_workbook(output_excel_loc)
+
+    # Find the index of the given sheet
+    for sheet_index in range(len(xls_book.sheetnames)):
+        if xls_book.sheetnames[sheet_index] == sheet_name:
+            break
+
+    # Set given sheet as active
+    xls_book.active = sheet_index
+
+    # Save the workbook
+    xls_book.save(output_excel_loc)
+
+##################################################################################################################
