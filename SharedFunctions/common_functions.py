@@ -12,7 +12,6 @@ import pandas as pd
 # @param       : File, which you would like to search
 # @return      : List of the File Location(s)
 ##################################################################################################################
-
 def search_file(directory, file_name_or_extension):
     # Initialise List
     file_location_list = []
