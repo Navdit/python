@@ -1,97 +1,99 @@
 import os
 from openpyxl import load_workbook
 import xlsxwriter
+import datetime
+import pandas as pd
+
 
 ##################################################################################################################
-# Function Name: searchFile
-# Description  : Traverses the directory and search the file 
+# Function Name: search_file
+# Description  : Traverses the directory and search the file
 # @param       : Directory, which you would like to traverse
 # @param       : File, which you would like to search
 # @return      : List of the File Location(s)
 ##################################################################################################################
 
-def searchFile(Directory, FileNameOrExtenstion):
-    #Initilise List
-    fileLocationList = []
+def search_file(directory, file_name_or_extension):
+    # Initialise List
+    file_location_list = []
 
-    extension = FileNameOrExtenstion.lower()
+    extension = file_name_or_extension.lower()
 
-    for dirpath, dirnames, files in os.walk(Directory):
+    for dir_path, dir_names, files in os.walk(directory):
         for name in files:
-            if extension and name.endswith(FileNameOrExtenstion):
-                # print(os.path.join(dirpath, name))
-                fileLocationList.append(os.path.join(dirpath, name))
-                return fileLocationList
+            if extension and name.endswith(file_name_or_extension):
+                # print(os.path.join(dir_path, name))
+                file_location_list.append(os.path.join(dir_path, name))
+                return file_location_list
 
             elif not extension:
-                # print(os.path.join(dirpath, name))
-                fileLocationList.append(os.path.join(dirpath, name))
-                return fileLocationList
-            
-##################################################################################################################
-
+                # print(os.path.join(dir_path, name))
+                file_location_list.append(os.path.join(dir_path, name))
+                return file_location_list
 
 
 ##################################################################################################################
-# Function Name: stripList
+
+
+##################################################################################################################
+# Function Name: strip_list
 # Description  : Take a list of string objects and return the same list stripped of extra whitespace.
 # @param       : List which needs to be stripped of the extra white spaces
 # @return      : The same list, which was given as input but stripped of whitespaces
 ##################################################################################################################
-def stripList(listInput):
-    return([x.strip() for x in listInput])
-
-##################################################################################################################
+def strip_list(list_input):
+    return [x.strip() for x in list_input]
 
 
 ##################################################################################################################
-# Function Name: dropEvenOrOddElmentsOfList
+
+
+##################################################################################################################
+# Function Name: drop_even_or_odd_elements_of_list
 # Description  : Deletes the nth element of the list
 # @param       : List
 # @param       : Argument as Even or Odd. Zero is considered even
 # @return      : The same list, with dropped indexes
 ##################################################################################################################
-def dropEvenOrOddElmentsOfList(list, EvenOrOdd):
-    finalList = []
-    if(EvenOrOdd == "Even"):
-        finalList = [item for index, item in enumerate(list) if index % 2 == 0]
-    elif (EvenOrOdd == "Odd"):
-        finalList = [item for index, item in enumerate(list) if index % 2 != 0]
+def drop_even_or_odd_elements_of_list(input_list, even_or_odd):
+    if even_or_odd == "Even":
+        final_list = [item for index, item in enumerate(input_list) if index % 2 == 0]
+    elif even_or_odd == "Odd":
+        final_list = [item for index, item in enumerate(input_list) if index % 2 != 0]
     else:
         raise Exception("Custom Error: Argument can only be Even or Odd")
 
-    return finalList
+    return final_list
 
 ##################################################################################################################
 
 
-
 ##################################################################################################################
-# Function Name: checkFolder
+# Function Name: check_folder
 # Description  : Checks if the given folder exists, if not then creates a new one
 # @param       : Folder Location along with Folder Name.
 ##################################################################################################################
-def checkFolder (folderLoc):
-    if not os.path.exists(folderLoc):
-        os.makedirs(folderLoc)
-        
-##################################################################################################################
-
-
+def check_folder(folder_loc):
+    if not os.path.exists(folder_loc):
+        os.makedirs(folder_loc)
 
 ##################################################################################################################
-# Function Name: createCurrDateFolderName
+
+
+##################################################################################################################
+# Function Name: create_curr_date_folder_name
 # Description  : Creates a Folder Name of Current Date in format YYYYMMDD
 # @return      : String of CurrentDate Folder Name
 ##################################################################################################################
-def createCurrDateFolderName():
+def create_curr_date_folder_name():
     now = datetime.datetime.now()
     year = str(now.year)
     month = now.strftime('%m')
     day = now.strftime('%d')
-    strCurrFolder = year+month+day
-    return strCurrFolder
-        
+    str_curr_folder = year + month + day
+
+    return str_curr_folder
+
 ##################################################################################################################
 
 
