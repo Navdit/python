@@ -13,7 +13,7 @@ import win32com.client as win32     # pip install pywin32
 # @param       : File, which you would like to search
 # @return      : List of the File Location(s)
 ##################################################################################################################
-def search_file(directory, file_name_or_extension):
+def search_file(directory: str, file_name_or_extension: str) -> list:
     # Initialise List
     file_location_list = []
 
@@ -41,7 +41,7 @@ def search_file(directory, file_name_or_extension):
 # @param       : List which needs to be stripped of the extra white spaces
 # @return      : The same list, which was given as input but stripped of whitespaces
 ##################################################################################################################
-def strip_list(list_input):
+def strip_list(list_input: list) -> list:
     return [x.strip() for x in list_input]
 
 
@@ -52,16 +52,14 @@ def strip_list(list_input):
 # Function Name: drop_even_or_odd_elements_of_list
 # Description  : Deletes the nth element of the list
 # @param       : List
-# @param       : Argument as Even or Odd. Zero is considered even
+# @param       : Boolean Argument as Even = True;  Odd is False. Zero is considered even
 # @return      : The same list, with dropped indexes
 ##################################################################################################################
-def drop_even_or_odd_elements_of_list(input_list, even_or_odd):
-    if even_or_odd == "Even":
+def drop_even_or_odd_elements_of_list(input_list: list, even: bool) -> list:
+    if even:
         final_list = [item for index, item in enumerate(input_list) if index % 2 == 0]
-    elif even_or_odd == "Odd":
-        final_list = [item for index, item in enumerate(input_list) if index % 2 != 0]
     else:
-        raise Exception("Custom Error: Argument can only be Even or Odd")
+        final_list = [item for index, item in enumerate(input_list) if index % 2 != 0]
 
     return final_list
 
@@ -73,7 +71,7 @@ def drop_even_or_odd_elements_of_list(input_list, even_or_odd):
 # Description  : Checks if the given folder exists, if not then creates a new one
 # @param       : Folder Location along with Folder Name.
 ##################################################################################################################
-def check_folder(folder_loc):
+def check_folder(folder_loc:str):
     if not os.path.exists(folder_loc):
         os.makedirs(folder_loc)
 
@@ -85,7 +83,7 @@ def check_folder(folder_loc):
 # Description  : Creates a Folder Name of Current Date in format YYYYMMDD
 # @return      : String of CurrentDate Folder Name
 ##################################################################################################################
-def create_curr_date_folder_name():
+def generate_curr_date_folder_name() -> str:
     now = datetime.datetime.now()
     year = str(now.year)
     month = now.strftime('%m')
@@ -106,7 +104,7 @@ def create_curr_date_folder_name():
 # @param       : Boolean :append - True, to overwrite the existing excel file
 # @return      : Null
 ##################################################################################################################
-def write_to_excel(sheet_name, output_excel_df, output_excel_loc, append=True):
+def write_to_excel(sheet_name: str, output_excel_df: pd.DataFrame, output_excel_loc: str, append: bool=True):
     # Check if Excel File exists
     if not os.path.isfile(output_excel_loc):
         workbook = xlsxwriter.Workbook(output_excel_loc)
@@ -146,7 +144,7 @@ def write_to_excel(sheet_name, output_excel_df, output_excel_loc, append=True):
 # @param       : String: output_excel_loc - Location of the excel file
 # @return      : Null
 ##################################################################################################################
-def set_active_sheet(sheet_name, output_excel_loc):
+def set_active_sheet(sheet_name: str, output_excel_loc: str):
     # Load Excel Sheet
     xls_book = load_workbook(output_excel_loc)
 
@@ -170,7 +168,7 @@ def set_active_sheet(sheet_name, output_excel_loc):
 # @param       : String: output_excel_loc - Location of excel which needs to be formatted
 # @return      : Null
 ##################################################################################################################
-def auto_fit_columns_of_excel(output_excel_loc):
+def auto_fit_columns_of_excel(output_excel_loc: str):
     # Initialize
     excel = win32.gencache.EnsureDispatch('Excel.Application')
 
