@@ -8,10 +8,10 @@ from bokeh.layouts import column
 
 
 # File Locations
-file_source = "/Users/navdsharma/Documents/03_Manilla_GDC/Scripts/data/src/source_file.txt"
+file_source = "/Users/Documents/source_file.txt"
 file_destination = "~/dummy/"
-pem_location = "/Users/navdsharma/Downloads/SydneyJKVWebSite.pem"
-destination_machine = "ubuntu@ec2-54-79-95-26.ap-southeast-2.compute.amazonaws.com"
+pem_location = "/Users/Downloads/Test.pem"
+destination_machine = "ec2-machine-location"
 
 # File Size in bytes
 file_size = 1000000
