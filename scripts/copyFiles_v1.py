@@ -1,11 +1,9 @@
 import os
 import time
-from pip._internal import main as pipmain
 import pandas as pd
+from math import pi
 from bokeh.models import (ColumnDataSource, HoverTool, LabelSet, ranges)
-from bokeh.models.formatters import PrintfTickFormatter
 from bokeh.plotting import figure, output_file, save, show
-from bokeh.models import SingleIntervalTicker, LinearAxis
 from bokeh.layouts import column
 
 
@@ -20,12 +18,7 @@ file_size = 1000000
 
 # File Transfer Rate and Duration in seconds
 file_transfer_rate = 10
-duration = 300
-
-
-# FUNCTION - Installs the given Module in Python
-def install(package):
-    pipmain(['install', package])
+duration = 1000
 
 
 # FUNCTION - Create Source file of given size
@@ -33,7 +26,7 @@ def create_source_file(given_file_size, source_file_location):
     with open(source_file_location, "wb") as f:
         f.write(os.urandom(given_file_size))
 
-    print("Source File Created...")
+    print("Source File of {} MB Created Successfully!...".format(given_file_size/1000000))
 
 
 # FUNCTION - File Transfer at given rate
@@ -54,11 +47,11 @@ def file_transfer_at_given_rate(total_duration, rate_of_file_transfer):
         os.system("scp -i {} -r {} {}:{}".format(pem_location, file_source, destination_machine, file_destination))
         transfer_time = time.perf_counter() - start_time
 
-        print("File_{} transfer started at {} and got completed in {} secs...".format(file_number+1, start_time,
+        print("File_{} transfer started at {}, got completed in {} secs...".format(file_number+1, current_time,
                                                                                       round(transfer_time, 3)))
 
         # Adding to dataframe
-        results_df.loc[file_number] = [current_time, file_number+1, transfer_time]
+        results_df.loc[file_number] = [current_time, "File_" + str(file_number+1), transfer_time]
 
         # Sleep
         if file_transfer_rate-transfer_time < 0:
@@ -68,12 +61,12 @@ def file_transfer_at_given_rate(total_duration, rate_of_file_transfer):
 
     # Set correct datatypes
     results_df['Start_Time'] = results_df['Start_Time'].astype('datetime64[ns]')
-    results_df['File_Number'] = results_df['File_Number'].astype(int)
+    results_df['File_Number'] = results_df['File_Number'].astype(str)
 
     # Save Dataframe to csv
     results_file_name = "Results_" + time.strftime("%H%M%S") + ".csv"
     results_df.to_csv(results_file_name, sep=',', index=False)
-    print("Raw Results File generated! Please check file - {}".format(results_file_name))
+    print("Raw Results File generated! Please check file: {}".format(results_file_name))
 
     return results_df
 
@@ -82,25 +75,10 @@ def file_transfer_at_given_rate(total_duration, rate_of_file_transfer):
 def set_hover_tool_tips_graph1() -> object:
     hover_tool_tips = HoverTool(
         tooltips=[
-            ("Time Taken", "@Transfer_Time{0.2f} secs")
+            ("Time Taken", "@y{0.2f} secs")
         ],
 
-        formatters={'@Transfer_Time': 'printf'},
-
-        mode='mouse'  # display a tooltip whenever the cursor is vertically in line with a glyph
-    )
-
-    return hover_tool_tips
-
-
-# FUNCTION - Set the properties of the hover tool tips.
-def set_hover_tool_tips_graph2() -> object:
-    hover_tool_tips = HoverTool(
-        tooltips=[
-            ("Time Taken", "@values{0.2f} secs")
-        ],
-
-        formatters={'@values': 'printf'},
+        formatters={'@y': 'printf'},
 
         mode='mouse'  # display a tooltip whenever the cursor is vertically in line with a glyph
     )
@@ -148,46 +126,6 @@ def set_graph_and_legend_properties(plot_graph: figure(), graph_title: str) -> f
 
 # FUNCTION - Creates graph based on the dataframe
 def create_graph(results_df):
-    # Plot 1st Graph
-    source = ColumnDataSource(results_df)
-
-    transfer_rate_time_graph = figure(x_axis_label="Files",
-                                      x_axis_type=None,
-                                      y_axis_label="Time Taken to Transfer File(secs)",
-                                      toolbar_location="below",
-                                      tools="save")
-
-    # Ticker Props
-    ticker = SingleIntervalTicker(interval=1, num_minor_ticks=0)
-    xaxis = LinearAxis(ticker=ticker)
-    transfer_rate_time_graph.add_layout(xaxis, 'below')
-
-    # Bar Graph
-    transfer_rate_time_graph.vbar(x='File_Number',
-                                  top="Transfer_Time",
-                                  bottom=0,
-                                  source=source,
-                                  width=0.3,
-                                  color="#FFBF00")
-
-    # Line Graph
-    transfer_rate_time_graph.line(x='File_Number',
-                                  y="Transfer_Time",
-                                  source=source,
-                                  line_width=2,
-                                  color="#FFFF00")
-
-    # Format axises
-    transfer_rate_time_graph_final = set_graph_and_legend_properties(transfer_rate_time_graph,
-                                                                     "Transfer Rate Time (sec)")
-
-    # Add Tool - Hovertool
-    transfer_rate_time_graph_final.add_tools(set_hover_tool_tips_graph1())
-
-    # Format x-axis labels
-    transfer_rate_time_graph_final.xaxis.formatter = PrintfTickFormatter(format="File_%1.0f")
-
-    # Plot 2nd Graph
     # Create Data Source
     y_axis = ['Min', 'Avg', 'Max', '90th', '95th', '99th']
     x_axis = [round(results_df['Transfer_Time'].min(), 2),
@@ -197,7 +135,7 @@ def create_graph(results_df):
               round(results_df['Transfer_Time'].quantile(0.95), 2),
               round(results_df['Transfer_Time'].quantile(0.99), 2)]
 
-    # Create Source
+    # Create Source for 2nd Graph
     graph2_source = ColumnDataSource(dict(y=y_axis, right=x_axis))
 
     # Write results to csv
@@ -207,12 +145,54 @@ def create_graph(results_df):
     agg_report_name = "Perf_Summary_" + time.strftime("%H%M%S") + ".csv"
     aggregate_results_df.to_csv(agg_report_name, sep=',', index=False)
 
-    print("Performance Metrics Summary report generated!. Please check file - {}".format(agg_report_name))
+    print("Performance Metrics Summary report generated! Please check file: {}".format(agg_report_name))
 
+    # Plot 1st Graph
+    x_axis_graph1 = results_df['File_Number'].tolist()
+    temp_list = results_df['Transfer_Time'].tolist()
+    y_axis_graph1 = [round(elem, 2) for elem in temp_list]
+    graph1_source = ColumnDataSource(dict(x=x_axis_graph1, y=y_axis_graph1))
+
+    transfer_rate_time_graph = figure(x_range=x_axis_graph1,
+                                      plot_width=1900,
+                                      plot_height=400,
+                                      y_axis_label="Time Taken to Transfer File(secs)",
+                                      toolbar_location="below",
+                                      tools="save")
+
+    # Bar Graph
+    transfer_rate_time_graph.vbar(x='x',
+                                  top='y',
+                                  bottom=0,
+                                  source=graph1_source,
+                                  width=0.3,
+                                  color="#FFBF00")
+
+    # Line Graph
+    transfer_rate_time_graph.line(x='x',
+                                  y='y',
+                                  source=graph1_source,
+                                  line_width=2,
+                                  color="#FFFF00")
+
+    # Format axises
+    transfer_rate_time_graph_final = set_graph_and_legend_properties(transfer_rate_time_graph,
+                                                                     "Transfer Rate Time (sec)")
+    transfer_rate_time_graph_final.xaxis.major_label_orientation = pi / 4
+
+    # Add Tool - Hovertool
+    transfer_rate_time_graph_final.add_tools(set_hover_tool_tips_graph1())
+
+    # Format x-axis labels
+    # transfer_rate_time_graph_final.xaxis.formatter = PrintfTickFormatter(format="File_%1.0f")
+
+    # Plot 2nd Graph
     # Create Fig
     aggregates_graph = figure(y_range=y_axis,
-                              x_range=ranges.Range1d(start=0, end=results_df['Transfer_Time'].max() + 0.4),
-                              toolbar_location=None,
+                              x_range=ranges.Range1d(start=0, end=results_df['Transfer_Time'].max() + 2),
+                              toolbar_location='below',
+                              plot_width=900,
+                              plot_height=500,
                               tools="save")
 
     # Add Labels
@@ -245,7 +225,7 @@ def create_graph(results_df):
     save(column(transfer_rate_time_graph_final, aggregates_graph_final))
 
     # Success Message
-    print("Graph generated successfully! Please check file - {}".format(graph_file_name))
+    print("Graph generated successfully! Please check file: {}".format(graph_file_name))
 
 
 # Start
@@ -265,7 +245,3 @@ if __name__ == '__main__':
 
     # Print Time taken to execute script
     print("CUSTOM INFO : --- Script Execution Time: %s seconds ---" % (time.time() - start_time))
-
-
-
-
