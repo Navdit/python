@@ -11,12 +11,12 @@ print ("--------------------Matching Address STARTED--------------------")
 
 class propsFile:
     host = "localhost"
-    username = "root1"
+    username = "admin"
     password = "root"
-    db = "copper_rehab"
-    mainFolder = "C:\\Varsha\\MatchingAddressFiles\\"
-    logsFolder = "C:\\Users\Varsha Srivastava\\Desktop\\Copper Rehab\\02 Automation\\Logs\\"
-    logFile = "matchingAddress.log"
+    db = "database"
+    mainFolder = "C:\\testFiles\\"
+    logsFolder = "C:\\Users\\Desktop\\Logs\\"
+    logFile = "test.log"
     dbColumns = ['Billing Account Description', 'Product Instance', 'Ordered for', 'Matching address', 'Priority Assist', 'Status', 'UNI-D UNI ID', 'UNI-D Access Service ID']
     pandaChunkSize = 100000
     pollInterval = 10   #Define Polling In Secs
@@ -66,7 +66,7 @@ def loadCSVFile(sourceCSV):
     print ("Start executing: " + sourceCSV + " at " + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")) + "\n")
     sqlLoadFile = ("LOAD DATA LOW_PRIORITY LOCAL INFILE\n" + 
                 "'" + sourceCSV + "'\n" + 
-                "REPLACE INTO TABLE `copper_rehab`.`tblmatchingaddress`\n" +
+                "REPLACE INTO TABLE `copper_rehab`.`tbltest`\n" +
                 "FIELDS TERMINATED BY ','\n"
                 "OPTIONALLY ENCLOSED BY '\"'\n" +
                 "LINES TERMINATED BY '\\r\\n'" + "\n" +
@@ -113,16 +113,16 @@ def main():
 
     #Paths
     rootFolder = propsFile.mainFolder
-    fbFile = rootFolder+currFolder+"\\"+"AVC_FTTB_"+currFolder+".csv"
+    fbFile = rootFolder+currFolder+"\\"+"folder1"+currFolder+".csv"
     print(fbFile)
-    fnFile = rootFolder+currFolder+"\\"+"AVC_FTTN_"+currFolder+".csv"
+    fnFile = rootFolder+currFolder+"\\"+"folder2"+currFolder+".csv"
     print(fnFile)
     chunkFilesLoc = rootFolder+currFolder+"\\ChunkFiles\\"
     print(chunkFilesLoc)
 
     #Empty Table and create ChunkFiles Folder
     if os.path.exists(rootFolder+currFolder):
-        #delTable("tblmatchingaddress")
+        #delTable("tbltest")
         #Check Folder
         checkFolder(chunkFilesLoc)
 
@@ -130,25 +130,25 @@ def main():
     cols = propsFile.dbColumns
     chunkSz = propsFile.pandaChunkSize
 
-    #FTTB -- Split CSV and Load Data
-    print("FTTB - Split CSV and Load Data")   
-    outputFileLoc = chunkFilesLoc+"AVC_FTTB_"+currFolder+"_"
+    #Dummy -- Split CSV and Load Data
+    print("Dummy - Split CSV and Load Data")   
+    outputFileLoc = chunkFilesLoc+"fold1"+currFolder+"_"
     filename = fbFile
     if os.path.exists(filename):
         spliceCSVandLoadDB(fbFile,cols,chunkSz,0,outputFileLoc)
     else:
-        print ("FTTB File doesn't exist for Today's Date")
-        logger.info("FTTB File doesn't exist for Today's Date")
+        print ("Dummy File doesn't exist for Today's Date")
+        logger.info("Dummy File doesn't exist for Today's Date")
 
-    #FTTN -- Split CSV and Load Data
-    print("FTTN - Split CSV and Load Data")
+    #Dummy1 -- Split CSV and Load Data
+    print("Dummy1 - Split CSV and Load Data")
     filename = fnFile
-    outputFileLoc = chunkFilesLoc+"AVC_FTTN_"+currFolder+"_"
+    outputFileLoc = chunkFilesLoc+"AVC_Dummy1_"+currFolder+"_"
     if os.path.exists(filename):
         spliceCSVandLoadDB(fnFile,cols,chunkSz,0,outputFileLoc)
     else:
-        print ("FTTN File doesn't exist for Today's Date")
-        logger.info("FTTN File doesn't exist for Today's Date")
+        print ("Dummy1 File doesn't exist for Today's Date")
+        logger.info("Dummy1 File doesn't exist for Today's Date")
 
     #Remove ChunkFile Folder
     # if os.path.exists(chunkFilesLoc):
@@ -187,4 +187,3 @@ if __name__ == "__main__":
     logger.info("Time elapsed to compelete activity: ")
     logger.info(str(endProgram - startProgram) + " secs")        
         
- 
