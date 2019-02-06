@@ -1,0 +1,60 @@
+<!-- Static navbar -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Click the shortest route!</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><p class="navbar-text">Score: {{score}}</p></li>
+       <li><p class="navbar-text">
+            <span class="label" ng:class="diff == 'easy' ? 'label-primary' : 'label-default'">Easy</span>
+            <span class="label" ng:class="diff == 'medium' ? 'label-primary' : 'label-default'">Medium</span>
+            <span class="label" ng:class="diff == 'hard' ? 'label-primary' : 'label-default'">Hard</span>
+          </p></li>
+          <li><p class="navbar-text"><button class="btn btn-default" type="button" ng-click="newgame()">New Game</button></p></li>
+          <li></li>
+      </ul>
+    </div>
+  </div><!--/.container-fluid -->
+</nav>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-default" ng:class="answer1css" ng-click="select(0);" style="cursor: pointer;">
+      <div class="panel-heading"><strong>Total Miles:</strong> {{answer1}}</div>
+      <div class="panel-body">
+
+      <p class="text-center"><img width="300" src="{{ route[0].image }}"/></p>
+      
+      </div>
+      <ul class="list-group">
+        <li class="list-group-item" ng-repeat="airport in route[0].airports">{{ airport }}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-default" ng:class="answer2css" ng-click="select(1);" style="cursor: pointer;">
+      <div class="panel-heading"><strong>Total Miles:</strong> {{answer2}}</div>
+      <div class="panel-body">
+       <p class="text-center"><img width="300" src="{{ route[1].image }}"/></p>
+      </div>
+      <ul class="list-group">
+        <li class="list-group-item" ng-repeat="airport in route[1].airports">{{ airport }}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <button class="btn btn-default" type="button" ng-disabled="!answered" ng-click="next()">Next</button>
+  </div>
+</div>
